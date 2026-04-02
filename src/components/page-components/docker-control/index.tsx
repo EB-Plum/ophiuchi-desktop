@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CertificateManager } from "@/helpers/certificate-manager";
+import { ProxyManager } from "@/helpers/proxy-manager";
 import proxyListStore from "@/stores/proxy-list";
 import systemStatusStore from "@/stores/system-status";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
@@ -301,13 +302,15 @@ export default function DockerControl({}: {}) {
       (proxy) => proxy.canLaunch === true,
     );
 
-    // const toastId = toast.loading(
-    //   `Generating ${canLaunchProxyList.length} nginx configuration files...`
-    // );
+    // load nginx settings
+    const proxyMgr = ProxyManager.sharedManager();
+    const nginxSettings = await proxyMgr.getNginxSettings();
+
     const nginxGen = canLaunchProxyList.map((proxy) => {
       return certMgr.generateNginxConfigurationFiles(
         proxy.hostname,
         proxy.port,
+        nginxSettings,
       );
     });
     console.log(`nginxGen: ${nginxGen}`);

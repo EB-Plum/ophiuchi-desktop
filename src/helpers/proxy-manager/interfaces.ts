@@ -14,3 +14,15 @@ export type IProxyGroupData = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type INginxSettings = {
+  proxyBufferSize: string; // e.g. "8k"
+  proxyBuffers: string; // e.g. "8 8k"
+  largeClientHeaderBuffers: string; // e.g. "4 16k"
+};
+
+export const DEFAULT_NGINX_SETTINGS: INginxSettings = {
+  proxyBufferSize: "2k",
+  proxyBuffers: "16 4k",
+  largeClientHeaderBuffers: "4 8k",
+};
