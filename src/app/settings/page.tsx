@@ -149,11 +149,11 @@ function SettingsPage() {
                       proxyBufferSize: e.target.value,
                     })
                   }
-                  placeholder="8k"
+                  placeholder="2k"
                 />
                 <p className="text-xs text-muted-foreground">
                   Size of the buffer for reading the first part of the response.
-                  (e.g. 4k, 8k, 16k)
+                  (e.g. 2k, 8k, 16k)
                 </p>
               </div>
               <div className="space-y-2">
@@ -167,11 +167,11 @@ function SettingsPage() {
                       proxyBuffers: e.target.value,
                     })
                   }
-                  placeholder="8 8k"
+                  placeholder="16 4k"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Number and size of buffers for proxied responses. (e.g. 8 8k,
-                  16 4k)
+                  Number and size of buffers for proxied responses. (e.g. 16 4k,
+                  8 8k)
                 </p>
               </div>
               <div className="space-y-2">
@@ -187,11 +187,11 @@ function SettingsPage() {
                       largeClientHeaderBuffers: e.target.value,
                     })
                   }
-                  placeholder="4 16k"
+                  placeholder="4 8k"
                 />
                 <p className="text-xs text-muted-foreground">
                   Number and size of buffers for large client headers. (e.g. 4
-                  16k, 4 32k)
+                  8k, 4 16k, 4 32k)
                 </p>
               </div>
             </div>

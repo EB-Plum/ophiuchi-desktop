@@ -22,7 +22,7 @@ export type INginxSettings = {
 };
 
 export const DEFAULT_NGINX_SETTINGS: INginxSettings = {
-  proxyBufferSize: "8k",
-  proxyBuffers: "8 8k",
-  largeClientHeaderBuffers: "4 16k",
+  proxyBufferSize: "2k",
+  proxyBuffers: "16 4k",
+  largeClientHeaderBuffers: "4 8k",
 };
