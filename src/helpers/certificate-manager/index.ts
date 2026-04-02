@@ -1,3 +1,7 @@
+import {
+  DEFAULT_NGINX_SETTINGS,
+  INginxSettings,
+} from "@/helpers/proxy-manager/interfaces";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import {
   BaseDirectory,
@@ -68,7 +72,11 @@ export class CertificateManager {
     }
   }
 
-  async generateNginxConfigurationFiles(hostname: string, port: number) {
+  async generateNginxConfigurationFiles(
+    hostname: string,
+    port: number,
+    nginxSettings: INginxSettings = DEFAULT_NGINX_SETTINGS,
+  ) {
     // save to file
     if (
       !(await exists(`conf/conf.d`, {
@@ -89,7 +97,13 @@ export class CertificateManager {
       nginxDefaultConfigPath,
     );
 
-    await writeTextFile(`conf/nginx.conf`, nginxDefaultConfigTemplate, {
+    // apply nginx settings to default config
+    const nginxDefaultConfig = nginxDefaultConfigTemplate.replace(
+      /{LARGE_CLIENT_HEADER_BUFFERS}/g,
+      nginxSettings.largeClientHeaderBuffers,
+    );
+
+    await writeTextFile(`conf/nginx.conf`, nginxDefaultConfig, {
       baseDir: BaseDirectory.AppData,
     });
 
@@ -112,10 +126,19 @@ export class CertificateManager {
     // replace all occurences of {PORT} with port
     const nginxConfigWithPort = nginxConfig.replace(/{PORT}/g, port.toString());
 
+    // apply nginx buffer settings
+    const nginxConfigWithBuffers = nginxConfigWithPort
+      .replace(/{PROXY_BUFFER_SIZE}/g, nginxSettings.proxyBufferSize)
+      .replace(/{PROXY_BUFFERS}/g, nginxSettings.proxyBuffers);
+
     // write nginx config to file
-    await writeTextFile(`conf/conf.d/${hostname}.conf`, nginxConfigWithPort, {
-      baseDir: BaseDirectory.AppData,
-    });
+    await writeTextFile(
+      `conf/conf.d/${hostname}.conf`,
+      nginxConfigWithBuffers,
+      {
+        baseDir: BaseDirectory.AppData,
+      },
+    );
   }
   constructor() {
     // init

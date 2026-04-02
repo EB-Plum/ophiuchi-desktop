@@ -6,8 +6,18 @@ import {
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 import { IFileManagerBase } from "../file-manager";
-import { CONFIG_DIR, GROUP_FILE_NAME, PROXY_FILE_NAME } from "./constants";
-import { IProxyData, IProxyGroupData } from "./interfaces";
+import {
+  CONFIG_DIR,
+  GROUP_FILE_NAME,
+  NGINX_SETTINGS_FILE_NAME,
+  PROXY_FILE_NAME,
+} from "./constants";
+import {
+  DEFAULT_NGINX_SETTINGS,
+  INginxSettings,
+  IProxyData,
+  IProxyGroupData,
+} from "./interfaces";
 import { m001_createGroupIfNotExists } from "./migration/001-create-group";
 import { m002_addProxyCreatedAt } from "./migration/002-add-proxy-created-at";
 
@@ -107,6 +117,30 @@ export class ProxyManager implements IFileManagerBase {
       {
         baseDir,
       },
+    );
+  }
+
+  async getNginxSettings(): Promise<INginxSettings> {
+    const baseDir = this.getBaseDir();
+    const fileExist = await exists(`${CONFIG_DIR}/${NGINX_SETTINGS_FILE_NAME}`, {
+      baseDir,
+    });
+    if (!fileExist) {
+      return DEFAULT_NGINX_SETTINGS;
+    }
+    const fileData = await readTextFile(
+      `${CONFIG_DIR}/${NGINX_SETTINGS_FILE_NAME}`,
+      { baseDir },
+    );
+    return { ...DEFAULT_NGINX_SETTINGS, ...JSON.parse(fileData) };
+  }
+
+  async saveNginxSettings(data: INginxSettings) {
+    const baseDir = this.getBaseDir();
+    await writeTextFile(
+      `${CONFIG_DIR}/${NGINX_SETTINGS_FILE_NAME}`,
+      JSON.stringify(data),
+      { baseDir },
     );
   }
 
